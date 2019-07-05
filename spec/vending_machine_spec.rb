@@ -4,7 +4,7 @@ describe VendingMachine do
 
   it 'is initialized with a default inventory if none is provided' do
     vending_machine = described_class.new
-    expect(vending_machine.inventory).to eq({'chocolate' => [20, 2], 'soda' => [10, 1], 'crisps' => [15, 1.5]})
+    expect(vending_machine.inventory).to eq({'chocolate' => [20, 200], 'soda' => [10, 100], 'crisps' => [15, 150]})
   end
 
   describe '#select_item' do
@@ -27,21 +27,26 @@ describe VendingMachine do
 
     it 'removes an item from inventory when full payment is received in full' do
       vending_machine = described_class.new
-      allow_any_instance_of(Kernel).to receive(:gets).and_return(2)
+      allow_any_instance_of(Kernel).to receive(:gets).and_return('£2')
       expect { vending_machine.pay_for("chocolate") }.to change{ vending_machine.inventory['chocolate'][0] }.from(20).to(19)
     end
 
     it 'removes an item from inventory when full payment is receive in increments' do
       vending_machine = described_class.new
-      allow_any_instance_of(Kernel).to receive(:gets).and_return(1)
+      allow_any_instance_of(Kernel).to receive(:gets).and_return('£1')
       expect { vending_machine.pay_for("crisps") }.to change{ vending_machine.inventory['crisps'][0] }.from(15).to(14)
     end
 
   end
 
   it 'takes an initial load of products' do
-    vending_machine = described_class.new({'haribo' => [20, 2], 'water' => [10, 1], 'mints' => [15, 1.5]})
-    expect(vending_machine.inventory).to eq({'haribo' => [20, 2], 'water' => [10, 1], 'mints' => [15, 1.5]})
+    vending_machine = described_class.new(inventory: {'haribo' => [20, 200], 'water' => [10, 100], 'mints' => [15, 150]})
+    expect(vending_machine.inventory).to eq({'haribo' => [20, 200], 'water' => [10, 100], 'mints' => [15, 150]})
+  end
+
+  it 'takes an inital load of coins' do
+    vending_machine = described_class.new(coins: {'1p' => 10, '2p' => 10, '5p' => 5, '10p' => 5, '50p' => 5, '£1' => 5, '£2' => 5})
+    expect(vending_machine.coins).to eq({'1p' => 10, '2p' => 10, '5p' => 5, '10p' => 5, '50p' => 5, '£1' => 5, '£2' => 5})
   end
 
 end

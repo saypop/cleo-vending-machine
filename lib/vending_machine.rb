@@ -1,11 +1,14 @@
 class VendingMachine
 
-  DEFAULT_INVENTORY = {'chocolate' => [20, 2], 'soda' => [10, 1], 'crisps' => [15, 1.5]}
+  DEFAULT_INVENTORY = { 'chocolate' => [20, 200], 'soda' => [10, 100], 'crisps' => [15, 150] }
+  DEFAULT_COINAGE = {'1p' => 1000, '2p' => 500, '5p' => 200, '10p' => 100, '50p' => 50, '£1' => 25, '£2' => 10}
+  COIN_MAP = { '1p' => 1, '2p' => 2, '5p' => 5, '10p' => 10, '50p' => 50, '£1' => 100, '£2' => 200 }
 
-  attr_reader :inventory
+  attr_reader :inventory, :coins
 
-  def initialize(inventory = DEFAULT_INVENTORY)
-    @inventory = inventory
+  def initialize(inventory: DEFAULT_INVENTORY, coins: DEFAULT_COINAGE)
+    @inventory, @initial_inventory = inventory
+    @coins, @inital_coinage = coins
   end
 
   def select_item()
@@ -15,10 +18,12 @@ class VendingMachine
   end
 
   def pay_for(item)
-    print "How much money would you like to insert? "
+    puts "You can pay with the following coins: 1p, 2p, 5p, 10p, 50p, £1, £2"
+    print "Which coin would you like to insert? "
     change_due = - @inventory[item][1]
     while change_due < 0
-      inserted_amount = gets
+      inserted_coin = gets
+      inserted_amount = COIN_MAP[inserted_coin.chomp]
       change_due += inserted_amount
       if change_due >= 0
         @inventory[item][0] -= 1
@@ -29,7 +34,5 @@ class VendingMachine
       end
     end
   end
-
-
 
 end
