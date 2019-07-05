@@ -8,4 +8,8 @@ class VendingMachine
     @inventory = DEFAULT_INVENTORY
   end
 
+  def select_item(item)
+
+  end
+
 end
