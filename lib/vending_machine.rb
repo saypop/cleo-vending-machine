@@ -4,8 +4,8 @@ class VendingMachine
 
   attr_reader :inventory
 
-  def initialize
-    @inventory = DEFAULT_INVENTORY
+  def initialize(inventory = DEFAULT_INVENTORY)
+    @inventory = inventory
   end
 
   def select_item()
@@ -22,11 +22,14 @@ class VendingMachine
       change_due += inserted_amount
       if change_due >= 0
         @inventory[item][0] -= 1
-        puts "Thanks, here is your #{item}!"
+        puts "Thanks, here's your #{item}!"
+        puts "Here is your change: #{change_due}" unless change_due == 0
       else
         print "You still owe #{- change_due}, how much would you like to insert?"
       end
     end
   end
+
+
 
 end
