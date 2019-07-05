@@ -9,7 +9,7 @@ class VendingMachine
   end
 
   def select_item(item)
-
+    raise "Sorry, that item is not available. Please select an item from the list." unless @inventory.include? item
   end
 
 end
