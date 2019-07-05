@@ -24,9 +24,15 @@ describe VendingMachine do
 
   describe '#pay_for' do
 
-    it 'removes an item from inventory when full payment is received' do
+    it 'removes an item from inventory when full payment is received in full' do
       allow_any_instance_of(Kernel).to receive(:gets).and_return(2)
       expect { vending_machine.pay_for("chocolate") }.to change{ vending_machine.inventory['chocolate'][0] }.from(20).to(19)
+    end
+
+    it 'removes an item from inventory when full payment is receive in increments' do
+      vending_machine = described_class.new
+      allow_any_instance_of(Kernel).to receive(:gets).and_return(1)
+      expect { vending_machine.pay_for("crisps") }.to change{ vending_machine.inventory['crisps'][0] }.from(15).to(14)
     end
 
   end

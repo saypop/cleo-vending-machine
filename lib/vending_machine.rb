@@ -16,9 +16,16 @@ class VendingMachine
 
   def pay_for(item)
     print "How much money would you like to insert? "
-    inserted_amount = gets
-    if inserted_amount >= @inventory[item][1]
-      @inventory[item][0] -= 1
+    change_due = - @inventory[item][1]
+    while change_due < 0
+      inserted_amount = gets
+      change_due += inserted_amount
+      if change_due >= 0
+        @inventory[item][0] -= 1
+        puts "Thanks, here is your #{item}!"
+      else
+        print "You still owe #{- change_due}, how much would you like to insert?"
+      end
     end
   end
 
