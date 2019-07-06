@@ -40,7 +40,7 @@ class VendingMachine
     change = {}
     amount_due = amount
     highest_denomination = ""
-    virtual_coin_bank = @coin_bank
+    virtual_coin_bank = @coin_bank.dup
     while amount_due > 0
       virtual_coin_bank.each do |key, value|
         highest_denomination = key if MONEY_MAP[key] <= amount_due && value > 0

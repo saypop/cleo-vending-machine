@@ -61,9 +61,14 @@ describe VendingMachine do
       expect(vending_machine.return_change(50)).to eq({"20p"=>1, "10p"=>1, "5p"=>1, "2p"=>5, "1p"=>5})
     end
 
-    it 'returns an empty hash when chnage cannot be made' do
+    it 'returns an empty hash when change cannot be made' do
       vending_machine = described_class.new(coins: {'1p' => 4, '2p' => 5, '5p' => 1, '10p' => 1, '20p' => 1})
       expect(vending_machine.return_change(50)).to eq({})
+    end
+
+    it 'does not alter coin bank when change cannot be made' do
+      vending_machine = described_class.new(coins: {'1p' => 4, '2p' => 5, '5p' => 1, '10p' => 1, '20p' => 1})
+      expect{ vending_machine.return_change(50) }.not_to change{ vending_machine.coin_bank }
     end
 
   end
