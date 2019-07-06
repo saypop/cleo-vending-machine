@@ -46,7 +46,17 @@ describe VendingMachine do
 
   it 'takes an inital load of coins' do
     vending_machine = described_class.new(coins: {'1p' => 10, '2p' => 10, '5p' => 5, '10p' => 5, '50p' => 5, '£1' => 5, '£2' => 5})
-    expect(vending_machine.coins).to eq({'1p' => 10, '2p' => 10, '5p' => 5, '10p' => 5, '50p' => 5, '£1' => 5, '£2' => 5})
+    expect(vending_machine.coin_bank).to eq({'1p' => 10, '2p' => 10, '5p' => 5, '10p' => 5, '50p' => 5, '£1' => 5, '£2' => 5})
   end
+
+  describe '#return_change' do
+
+    it 'removes the change in the highest denomination available' do
+      vending_machine = described_class.new(coins: {'1p' => 100, '2p' => 5, '5p' => 1, '10p' => 1, '20p' => 1})
+      expect{ vending_machine.return_change(50) }.to change{ vending_machine.coin_bank['1p'] }.from(100).to(95)
+    end
+
+  end
+
 
 end
