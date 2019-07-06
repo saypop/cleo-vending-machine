@@ -72,4 +72,8 @@ class VendingMachine
     @inventory = Marshal.load(Marshal.dump(@initial_inventory))
   end
 
+  def reload_coins
+    @coin_bank = Marshal.load(Marshal.dump(@initial_coin_bank))
+  end
+
 end

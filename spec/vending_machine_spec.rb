@@ -92,4 +92,17 @@ describe VendingMachine do
 
   end
 
+  describe '#reload_coins' do
+
+    it 'tops up coins to the levels that were orignally loaded' do
+      vending_machine= described_class.new
+      allow_any_instance_of(Kernel).to receive(:gets).and_return('£2')
+      vending_machine.pay_for("soda")
+      expect(vending_machine.coin_bank).to eq({'1p' => 1000, '2p' => 500, '5p' => 200, '10p' => 100, '50p' => 50, '£1' => 24, '£2' => 10})
+      vending_machine.reload_coins
+      expect(vending_machine.coin_bank).to eq({'1p' => 1000, '2p' => 500, '5p' => 200, '10p' => 100, '50p' => 50, '£1' => 25, '£2' => 10})
+    end
+
+  end
+
 end
