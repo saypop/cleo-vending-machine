@@ -58,7 +58,6 @@ class VendingMachine
       end
     end
     @coin_bank = virtual_coin_bank
-    p change
     return change
   end
 

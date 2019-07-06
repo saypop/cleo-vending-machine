@@ -56,6 +56,11 @@ describe VendingMachine do
       expect{ vending_machine.return_change(50) }.to change{ vending_machine.coin_bank['1p'] }.from(100).to(95)
     end
 
+    it 'returns the change in the highest denomination available' do
+      vending_machine = described_class.new(coins: {'1p' => 100, '2p' => 5, '5p' => 1, '10p' => 1, '20p' => 1})
+      expect(vending_machine.return_change(50)).to eq({"20p"=>1, "10p"=>1, "5p"=>1, "2p"=>5, "1p"=>5})
+    end
+
   end
 
 
