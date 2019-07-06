@@ -79,5 +79,17 @@ describe VendingMachine do
 
   end
 
+  describe '#reload_inventory' do
+
+    it 'tops up inventory to the levels that were orignally loaded' do
+      vending_machine= described_class.new
+      allow_any_instance_of(Kernel).to receive(:gets).and_return('£1')
+      vending_machine.pay_for("soda")
+      expect(vending_machine.inventory).to eq({'chocolate' => [20, 200], 'soda' => [9, 100], 'crisps' => [15, 150]})
+      vending_machine.reload_inventory
+      expect(vending_machine.inventory).to eq({'chocolate' => [20, 200], 'soda' => [10, 100], 'crisps' => [15, 150]})
+    end
+
+  end
 
 end

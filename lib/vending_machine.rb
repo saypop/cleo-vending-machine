@@ -7,8 +7,8 @@ class VendingMachine
   attr_reader :inventory, :coin_bank
 
   def initialize(inventory: DEFAULT_INVENTORY, coins: DEFAULT_COIN_BANK)
-    @inventory, @initial_inventory = inventory
-    @coin_bank, @inital_coin_bank = coins
+    @inventory, @initial_inventory = Marshal.load(Marshal.dump(inventory)), Marshal.load(Marshal.dump(inventory))
+    @coin_bank, @initial_coin_bank = Marshal.load(Marshal.dump(coins)), Marshal.load(Marshal.dump(coins))
   end
 
   def select_item
@@ -39,6 +39,7 @@ class VendingMachine
         puts "Sorry, I don't have change for that amount. Please try again using smaller denominations."
         break
       end
+
     end
   end
 
@@ -63,8 +64,12 @@ class VendingMachine
         break
       end
     end
-    @coin_bank = virtual_coin_bank
+    @coin_bank = virtual_coin_bank.dup
     return change
+  end
+
+  def reload_inventory
+    @inventory = Marshal.load(Marshal.dump(@initial_inventory))
   end
 
 end
