@@ -19,19 +19,25 @@ class VendingMachine
 
   def pay_for(item)
     puts "You can pay with the following coins/notes: 1p, 2p, 5p, 10p, 50p, £1, £2, £5, £10"
-    print "Which coin would you like to insert? "
+    print "What would you like to insert? "
     change_due = - @inventory[item][1]
     while change_due < 0
       inserted_coin = gets
       inserted_amount = MONEY_MAP[inserted_coin.chomp]
       puts "Sorry I can't accept that, please insert a valid denomination." if inserted_amount == nil
       change_due += inserted_amount unless inserted_amount == nil
-      if change_due >= 0
+      if change_due > 0 && return_change(change_due) != {}
         @inventory[item][0] -= 1
         puts "Thanks, here's your #{ item }!"
-        puts "Here is your change: #{ change_due }" unless change_due == 0
-      else
+        puts "Here is your change: #{ change_due }"
+      elsif change_due == 0
+        @inventory[item][0] -= 1
+        puts "Thanks, here's your #{ item }!"
+      elsif change_due < 0
         print "You still owe #{ - change_due }, how much would you like to insert?"
+      elsif return_change(change_due) == {}
+        puts "Sorry, I don't have change for that amount. Please try again using smaller denominations."
+        break
       end
     end
   end

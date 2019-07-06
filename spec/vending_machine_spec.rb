@@ -37,6 +37,12 @@ describe VendingMachine do
       expect { vending_machine.pay_for("crisps") }.to change{ vending_machine.inventory['crisps'][0] }.from(15).to(14)
     end
 
+    it 'does not remove an item if change cannot be made' do
+      vending_machine = described_class.new(coins: {'1p' => 4, '2p' => 5, '5p' => 1, '10p' => 1, '20p' => 1})
+      allow_any_instance_of(Kernel).to receive(:gets).and_return('£5')
+      expect { vending_machine.pay_for("crisps") }.not_to change{ vending_machine.inventory['crisps'][0] }
+    end
+
   end
 
   it 'takes an initial load of products' do
