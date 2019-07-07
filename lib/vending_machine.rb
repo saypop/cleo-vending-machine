@@ -19,6 +19,54 @@ class VendingMachine
     main_menu_selection
   end
 
+  def select_item
+    item = gets.chomp
+    return "" unless item_available?(item)
+    return item
+  end
+
+  def pay_for(item)
+    change_due = - @inventory[item][1]
+    request_payment(change_due)
+    while change_due < 0
+      payment = validated_money
+      change_due += payment unless payment == nil
+      change_due = assess_transaction(item, change_due)
+    end
+  end
+
+  def process_change(item, change_due, change_denominations)
+    if change_denominations == {}
+      puts "Sorry, I don't have change for that amount. Please try again using smaller denominations."
+      return - @inventory[item][1]
+    else
+      complete_sale_with_change(item, change_due, change_denominations)
+      return 0
+    end
+  end
+
+  def calculate_change(change_due)
+    change = {}
+    @virtual_coin_bank = dup(@coin_bank)
+    change = get_highest_denominations(change_due, change)
+    @coin_bank = dup(@virtual_coin_bank)
+    return change
+  end
+
+  def reload_inventory
+    @inventory = dup(@initial_inventory)
+    puts "Inventory reloaded to:"
+    puts @inventory
+  end
+
+  def reload_coins
+    @coin_bank = dup(@initial_coin_bank)
+    puts "Coin bank reloaded to:"
+    puts @coin_bank
+  end
+
+  private
+
   def main_menu_selection
     case gets.chomp
     when '1'
@@ -54,26 +102,10 @@ class VendingMachine
     return item
   end
 
-  def select_item
-    item = gets.chomp
-    return "" unless item_available?(item)
-    return item
-  end
-
   def item_available?(item)
     return false unless @inventory.include? item.chomp
     return false unless @inventory[item.chomp][0] > 0
     return true
-  end
-
-  def pay_for(item)
-    change_due = - @inventory[item][1]
-    request_payment(change_due)
-    while change_due < 0
-      payment = validated_money
-      change_due += payment unless payment == nil
-      change_due = assess_transaction(item, change_due)
-    end
   end
 
   def validated_money
@@ -114,28 +146,10 @@ class VendingMachine
     puts "Thanks, here's your #{ item }!"
   end
 
-  def process_change(item, change_due, change_denominations)
-    if change_denominations == {}
-      puts "Sorry, I don't have change for that amount. Please try again using smaller denominations."
-      return - @inventory[item][1]
-    else
-      complete_sale_with_change(item, change_due, change_denominations)
-      return 0
-    end
-  end
-
   def complete_sale_with_change(item, change_due, change_denominations)
     complete_sale(item)
     puts "Here is your £#{ change_due / 100 } change:"
     puts change_denominations
-  end
-
-  def calculate_change(change_due)
-    change = {}
-    @virtual_coin_bank = dup(@coin_bank)
-    change = get_highest_denominations(change_due, change)
-    @coin_bank = dup(@virtual_coin_bank)
-    return change
   end
 
   def get_highest_denominations(change_due, change)
@@ -198,18 +212,6 @@ class VendingMachine
     end
     sleep 2
     manager_menu
-  end
-
-  def reload_inventory
-    @inventory = dup(@initial_inventory)
-    puts "Inventory reloaded to:"
-    puts @inventory
-  end
-
-  def reload_coins
-    @coin_bank = dup(@initial_coin_bank)
-    puts "Coin bank reloaded to:"
-    puts @coin_bank
   end
 
   def dup(hash)
