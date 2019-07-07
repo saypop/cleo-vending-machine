@@ -37,10 +37,13 @@ describe VendingMachine do
       expect { vending_machine.pay_for("crisps") }.to change{ vending_machine.inventory['crisps'][0] }.from(15).to(14)
     end
 
+  end
+
+  describe '#process_change' do
+
     it 'does not remove an item if change cannot be made' do
-      vending_machine = described_class.new(coins: {'1p' => 4, '2p' => 5, '5p' => 1, '10p' => 1, '20p' => 1})
-      allow_any_instance_of(Kernel).to receive(:gets).and_return('£5')
-      expect { vending_machine.pay_for("crisps") }.not_to change{ vending_machine.inventory['crisps'][0] }
+      vending_machine = described_class.new
+      expect { vending_machine.process_change("crisps", 500, {}) }.not_to change{ vending_machine.inventory['crisps'][0] }
     end
 
   end
@@ -55,26 +58,26 @@ describe VendingMachine do
     expect(vending_machine.coin_bank).to eq({'1p' => 10, '2p' => 10, '5p' => 5, '10p' => 5, '50p' => 5, '£1' => 5, '£2' => 5})
   end
 
-  describe '#return_change' do
+  describe '#calculate_change' do
 
     it 'removes the change in the highest denomination available' do
       vending_machine = described_class.new(coins: {'1p' => 100, '2p' => 5, '5p' => 1, '10p' => 1, '20p' => 1})
-      expect{ vending_machine.return_change(50) }.to change{ vending_machine.coin_bank['1p'] }.from(100).to(95)
+      expect{ vending_machine.calculate_change(50) }.to change{ vending_machine.coin_bank['1p'] }.from(100).to(95)
     end
 
     it 'returns the change in the highest denomination available' do
       vending_machine = described_class.new(coins: {'1p' => 100, '2p' => 5, '5p' => 1, '10p' => 1, '20p' => 1})
-      expect(vending_machine.return_change(50)).to eq({"20p"=>1, "10p"=>1, "5p"=>1, "2p"=>5, "1p"=>5})
+      expect(vending_machine.calculate_change(50)).to eq({"20p"=>1, "10p"=>1, "5p"=>1, "2p"=>5, "1p"=>5})
     end
 
     it 'returns an empty hash when change cannot be made' do
       vending_machine = described_class.new(coins: {'1p' => 4, '2p' => 5, '5p' => 1, '10p' => 1, '20p' => 1})
-      expect(vending_machine.return_change(50)).to eq({})
+      expect(vending_machine.calculate_change(50)).to eq({})
     end
 
     it 'does not alter coin bank when change cannot be made' do
       vending_machine = described_class.new(coins: {'1p' => 4, '2p' => 5, '5p' => 1, '10p' => 1, '20p' => 1})
-      expect{ vending_machine.return_change(50) }.not_to change{ vending_machine.coin_bank }
+      expect{ vending_machine.calculate_change(50) }.not_to change{ vending_machine.coin_bank }
     end
 
   end
