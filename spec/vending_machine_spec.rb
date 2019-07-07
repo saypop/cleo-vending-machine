@@ -12,13 +12,13 @@ describe VendingMachine do
     it 'lets a customer select an item that is in the inventory' do
       vending_machine = described_class.new
       allow_any_instance_of(Kernel).to receive(:gets).and_return('chocolate')
-      expect{ vending_machine.select_item }.not_to raise_error
+      expect(vending_machine.select_item).to eq('chocolate')
     end
 
     it 'does not allow a customer to select an item that is not in the inventory' do
       vending_machine = described_class.new
       allow_any_instance_of(Kernel).to receive(:gets).and_return('gold watch')
-      expect{ vending_machine.select_item }.to raise_error("Sorry, that item is not available. Please select an item from the list.")
+      expect(vending_machine.select_item).to eq('')
     end
 
   end
@@ -95,7 +95,7 @@ describe VendingMachine do
   describe '#reload_coins' do
 
     it 'tops up coins to the levels that were orignally loaded' do
-      vending_machine= described_class.new
+      vending_machine= described_class.new(coins: {'1p' => 1000, '2p' => 500, '5p' => 200, '10p' => 100, '50p' => 50, '£1' => 25, '£2' => 10})
       allow_any_instance_of(Kernel).to receive(:gets).and_return('£2')
       vending_machine.pay_for("soda")
       expect(vending_machine.coin_bank).to eq({'1p' => 1000, '2p' => 500, '5p' => 200, '10p' => 100, '50p' => 50, '£1' => 24, '£2' => 10})

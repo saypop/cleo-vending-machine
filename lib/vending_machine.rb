@@ -11,10 +11,53 @@ class VendingMachine
     @coin_bank, @initial_coin_bank = Marshal.load(Marshal.dump(coins)), Marshal.load(Marshal.dump(coins))
   end
 
+  def main_menu
+    puts "Please select an option:"
+    puts "1 - Buy an item."
+    puts "2 - Maintain the vending machine."
+    puts "3 - Exit."
+    main_menu_selection
+  end
+
+  def main_menu_selection
+    case gets.chomp
+    when 1
+      customer_menu
+    when 2
+      manager_menu
+    when 3
+      exit
+    else
+      puts "That was not a valid response, please choose option 1, 2, or 3."
+      main_menu_selection
+    end
+  end
+
+  def customer_menu
+    puts "What would you like to purchase?"
+    @inventory.each { |k, v| puts "#{ k } for £#{ v[1] / 100 }"}
+    puts "Or type in 'back' to go back to the main menu."
+    item = customer_menu_selection
+    puts "You have selected #{ item } for £#{ @inventory[item][1] / 100 }"
+    puts "You can pay with the following coins/notes: 1p, 2p, 5p, 10p, 50p, £1, £2, £5, £10"
+    puts "What would you like to insert?"
+    pay_for(item)
+  end
+
+  def customer_menu_selection
+    item = ""
+    while item.blank?
+      puts "Sorry, that item is not available. Please select an item from the list." unless item == ""
+      item = select_item
+      return vending_machine if item == back
+    end
+    return item
+  end
+
   def select_item
-    print "What would you like to purchase"
-    item = gets
-    raise "Sorry, that item is not available. Please select an item from the list." unless @inventory.include? item.chomp
+    item = gets.chomp
+    return "" unless @inventory.include? item.chomp
+    return item
   end
 
   def pay_for(item)
