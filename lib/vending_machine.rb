@@ -42,6 +42,8 @@ class VendingMachine
     puts "You can pay with the following coins/notes: 1p, 2p, 5p, 10p, 50p, £1, £2, £5, £10"
     puts "What would you like to insert?"
     pay_for(item)
+    sleep 2
+    main_menu
   end
 
   def customer_menu_selection
@@ -56,7 +58,6 @@ class VendingMachine
 
   def select_item
     item = gets.chomp
-    p @inventory[item]
     return "" unless item_available?(item)
     return item
   end
@@ -133,27 +134,43 @@ class VendingMachine
 
   def calculate_change(change_due)
     change = {}
-    amount_due = change_due
-    highest_denomination = ""
-    virtual_coin_bank = dup(@coin_bank)
-    while amount_due > 0
-      virtual_coin_bank.each do |key, value|
-        highest_denomination = key if MONEY_MAP[key] <= change_due && value > 0
-      end
+    @virtual_coin_bank = dup(@coin_bank)
+    change = get_highest_denominations(change_due, change)
+    @coin_bank = dup(@virtual_coin_bank)
+    return change
+  end
+
+  def get_highest_denominations(change_due, change)
+    while change_due > 0
+      highest_denomination = get_highest_denomination(change_due)
       unless highest_denomination == ""
-        change[highest_denomination] += 1 if change[highest_denomination]
-        change[highest_denomination] = 1 unless change[highest_denomination]
-        virtual_coin_bank[highest_denomination] -= 1
-        amount_due -= MONEY_MAP[highest_denomination]
-        highest_denomination = ""
+        update_bank(highest_denomination, change)
+        change_due -= MONEY_MAP[highest_denomination]
       else
-        change = {}
-        virtual_coin_bank = @coin_bank
+        change = reset_change
         break
       end
     end
-    @coin_bank = virtual_coin_bank.dup
     return change
+  end
+
+  def get_highest_denomination(change_due)
+    highest_denomination = ""
+    @virtual_coin_bank.each do |key, value|
+      highest_denomination = key if MONEY_MAP[key] <= change_due && value > 0
+    end
+    return highest_denomination
+  end
+
+  def update_bank(highest_denomination, change)
+    change[highest_denomination] += 1 if change[highest_denomination]
+    change[highest_denomination] = 1 unless change[highest_denomination]
+    @virtual_coin_bank[highest_denomination] -= 1
+  end
+
+  def reset_change
+    @virtual_coin_bank = dup(@coin_bank)
+    return {}
   end
 
   def reload_inventory
