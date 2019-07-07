@@ -21,11 +21,11 @@ class VendingMachine
 
   def main_menu_selection
     case gets.chomp
-    when 1
+    when '1'
       customer_menu
-    when 2
+    when '2'
       manager_menu
-    when 3
+    when '3'
       exit
     else
       puts "That was not a valid response, please choose option 1, 2, or 3."
@@ -39,8 +39,6 @@ class VendingMachine
     puts "Or type in 'back' to go back to the main menu."
     item = customer_menu_selection
     puts "You have selected #{ item } for £#{ @inventory[item][1] / 100 }"
-    puts "You can pay with the following coins/notes: 1p, 2p, 5p, 10p, 50p, £1, £2, £5, £10"
-    puts "What would you like to insert?"
     pay_for(item)
     sleep 2
     main_menu
@@ -48,7 +46,7 @@ class VendingMachine
 
   def customer_menu_selection
     item = select_item
-    while item.blank?
+    while blank?(item)
       puts "Sorry, that item is not available. Please select an item from the list."
       item = select_item
       return vending_machine if item == back
@@ -92,7 +90,7 @@ class VendingMachine
   end
 
   def request_payment(change_due)
-    puts "You owe #{ - change_due }, how much would you like to insert?"
+    puts "You owe £#{ - change_due / 100 }, how much would you like to insert?"
     puts "You can pay with the following coins/notes: 1p, 2p, 5p, 10p, 50p, £1, £2, £5, £10"
     puts "Or you can cancel this transaction and return to the main menu by typing cancel"
   end
@@ -173,16 +171,53 @@ class VendingMachine
     return {}
   end
 
+  def manager_menu
+    puts "Please select an option:"
+    puts "1 - View inventory."
+    puts "2 - View coin bank."
+    puts "3 - Reload inventory."
+    puts "4 - Reload coin bank."
+    puts "5 - Back to main menu."
+    manager_menu_selection
+  end
+
+  def manager_menu_selection
+    case gets.chomp
+    when '1'
+      puts @inventory
+    when '2'
+      puts @coin_bank
+    when '3'
+      reload_inventory
+    when '4'
+      reload_coins
+    when '5'
+      main_menu
+    else
+      puts "That was not a valid selection, please choose either 1, 2, 3, 4, or 5:"
+    end
+    sleep 2
+    manager_menu
+  end
+
   def reload_inventory
     @inventory = dup(@initial_inventory)
+    puts "Inventory reloaded to:"
+    puts @inventory
   end
 
   def reload_coins
     @coin_bank = dup(@initial_coin_bank)
+    puts "Coin bank reloaded to:"
+    puts @coin_bank
   end
 
   def dup(hash)
     Marshal.load(Marshal.dump(hash))
+  end
+
+  def blank?(string)
+    string == ""
   end
 
 end
