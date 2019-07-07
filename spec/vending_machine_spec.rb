@@ -21,6 +21,12 @@ describe VendingMachine do
       expect(vending_machine.select_item).to eq('')
     end
 
+    it 'does not allow a customer to select an item that is out of stock' do
+      vending_machine = described_class.new(inventory: {'haribo' => [0, 200], 'water' => [10, 100], 'mints' => [15, 150]})
+      allow_any_instance_of(Kernel).to receive(:gets).and_return('haribo')
+      expect(vending_machine.select_item).to eq('')
+    end
+
   end
 
   describe '#pay_for' do
