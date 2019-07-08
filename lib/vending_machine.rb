@@ -191,7 +191,9 @@ class VendingMachine
     puts "2 - View coin bank."
     puts "3 - Reload inventory."
     puts "4 - Reload coin bank."
-    puts "5 - Back to main menu."
+    puts "5 - Load a new set of items."
+    puts "6 - Load a new set of coins."
+    puts "7 - Back to main menu."
     manager_menu_selection
   end
 
@@ -206,12 +208,32 @@ class VendingMachine
     when '4'
       reload_coins
     when '5'
+      load_inventory
+    when '6'
+      load_coins
+    when '7'
       main_menu
     else
       puts "That was not a valid selection, please choose either 1, 2, 3, 4, or 5:"
     end
     sleep 2
     manager_menu
+  end
+
+  def load_inventory
+    puts "Enter an inventory in hash format"
+    puts "e.g. { 'chocolate' => [20, 200], 'soda' => [10, 100], 'crisps' => [15, 150] }"
+    puts "Where the format of each element in the hash is: 'name' => [quantity, price_in_cents]"
+    @inventory = gets.chomp
+    puts @inventory.class
+  end
+
+  def load_coins
+    puts "Enter a coin bank in hash format"
+    puts "e.g. {'1p' => 1000, '2p' => 500, '5p' => 200, '10p' => 100, '50p' => 50, '£1' => 25, '£2' => 10}"
+    puts "Where the format of each element in the hash is: 'denomination' => [quantity]"
+    @coin_bank = gets.chomp
+    puts @coin_bank.class
   end
 
   def dup(hash)
