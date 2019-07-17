@@ -4,11 +4,12 @@ class VendingMachine
   DEFAULT_COIN_BANK = {'1p' => 1000, '2p' => 500, '5p' => 200, '10p' => 100, '50p' => 50, '£1' => 25, '£2' => 10}
   MONEY_MAP = { '1p' => 1, '2p' => 2, '5p' => 5, '10p' => 10, '20p' => 20, '50p' => 50, '£1' => 100, '£2' => 200, '£5' => 500, '£10' => 1000 }
 
-  attr_reader :inventory, :coin_bank
+  attr_reader :inventory, :coin_bank, :purchase_history
 
   def initialize(inventory: DEFAULT_INVENTORY, coins: DEFAULT_COIN_BANK)
     @inventory, @initial_inventory = dup(inventory), dup(inventory)
     @coin_bank, @initial_coin_bank = dup(coins), dup(coins)
+    @purchase_history = { }
   end
 
   def main_menu
@@ -63,6 +64,19 @@ class VendingMachine
     @coin_bank = dup(@initial_coin_bank)
     puts "Coin bank reloaded to:"
     puts @coin_bank
+  end
+
+  def log_purchase(item)
+    if @purchase_history.include? item
+      @purchase_history[item] += 1
+      return
+    else
+      @purchase_history[item] = 1
+    end
+  end
+
+  def top_3_items
+    @purchase_history.sort_by {|_key, value| -value}.first(3).map { |k, v| k }
   end
 
   private
@@ -214,7 +228,7 @@ class VendingMachine
     when '7'
       main_menu
     else
-      puts "That was not a valid selection, please choose either 1, 2, 3, 4, or 5:"
+      puts "That was not a valid selection, please choose either 1, 2, 3, 4, 5, 6, or 7:"
     end
     sleep 2
     manager_menu
@@ -225,7 +239,6 @@ class VendingMachine
     puts "e.g. { 'chocolate' => [20, 200], 'soda' => [10, 100], 'crisps' => [15, 150] }"
     puts "Where the format of each element in the hash is: 'name' => [quantity, price_in_cents]"
     @inventory = gets.chomp
-    puts @inventory.class
   end
 
   def load_coins
@@ -233,7 +246,6 @@ class VendingMachine
     puts "e.g. {'1p' => 1000, '2p' => 500, '5p' => 200, '10p' => 100, '50p' => 50, '£1' => 25, '£2' => 10}"
     puts "Where the format of each element in the hash is: 'denomination' => [quantity]"
     @coin_bank = gets.chomp
-    puts @coin_bank.class
   end
 
   def dup(hash)

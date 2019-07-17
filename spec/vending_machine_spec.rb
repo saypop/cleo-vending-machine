@@ -7,6 +7,31 @@ describe VendingMachine do
     expect(vending_machine.inventory).to eq({'chocolate' => [20, 200], 'soda' => [10, 100], 'crisps' => [15, 150]})
   end
 
+  describe '#log_purchase' do
+    it 'adds a new item to purchase_history if item does not exist' do
+      vending_machine = described_class.new
+      expect{ vending_machine.log_purchase('chocolate') }.to change{ vending_machine.purchase_history}.from( {} ).to( { 'chocolate' => 1 })
+    end
+
+    it 'updates the count of an item in purchase_history if item does exist' do
+      vending_machine = described_class.new
+      vending_machine.log_purchase('chocolate')
+      expect{ vending_machine.log_purchase('chocolate') }.to change{ vending_machine.purchase_history}.from( { 'chocolate' => 1 } ).to( { 'chocolate' => 2 })
+    end
+
+  end
+
+  describe '#top_3_items' do
+    it 'return the top three items' do
+      vending_machine = described_class.new
+      5.times { vending_machine.log_purchase('chocolate') }
+      4.times { vending_machine.log_purchase('soda') }
+      3.times { vending_machine.log_purchase('haribo') }
+      2.times { vending_machine.log_purchase('crisps') }
+      expect(vending_machine.top_3_items).to eq(['chocolate', 'soda', 'haribo'])
+    end
+  end
+
   describe '#select_item' do
 
     it 'lets a customer select an item that is in the inventory' do
